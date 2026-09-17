@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeStart — Learn Typing From Zero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- 1. COLOURS (CSS variables = named colours you reuse) ---------- */
+:root{
+  --bg:#f6f7fb;
+  --panel:#ffffff;
+  --ink:#16181d;
+  --muted:#6b7280;
+  --line:#e3e6ee;
+  --accent:#4f46e5;
+  --good:#16a34a;
+  --bad:#dc2626;
+  --dim:#b6bac6;
+  --shadow:0 1px 2px rgba(16,18,29,.06),0 8px 24px rgba(16,18,29,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1116; --panel:#171a21; --ink:#e9ebf0; --muted:#9aa1b1;
+    --line:#262b36; --accent:#8b86ff; --good:#4ade80; --bad:#f87171; --dim:#4a5160;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1116; --panel:#171a21; --ink:#e9ebf0; --muted:#9aa1b1;
+  --line:#262b36; --accent:#8b86ff; --good:#4ade80; --bad:#f87171; --dim:#4a5160;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+
+/* ---------- 2. BASE LAYOUT ---------- */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.55;
+}
+.wrap{max-width:820px;margin:0 auto;padding:20px 16px 64px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav button{
+  border:1px solid transparent;background:transparent;color:var(--muted);
+  font:inherit;font-weight:600;font-size:14px;padding:7px 13px;border-radius:999px;cursor:pointer;
+}
+nav button:hover{color:var(--ink)}
+nav button.active{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:var(--shadow)}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.03em;margin:0 0 8px}
+h2{font-size:17px;margin:0 0 4px;letter-spacing:-.01em}
+p.sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+.hidden{display:none}
+
+.btn{
+  font:inherit;font-weight:600;font-size:15px;padding:11px 20px;border-radius:10px;
+  border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ---------- 3. THE TYPING AREA ---------- */
+#target{
+  font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  font-size:21px;line-height:1.85;letter-spacing:.01em;
+  padding:18px;border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  min-height:120px;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;
+}
+#target span{color:var(--dim)}
+#target span.ok{color:var(--good)}
+#target span.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,transparent);border-radius:3px}
+#target span.cur{border-bottom:2px solid var(--accent);color:var(--ink)}
+#input{
+  width:100%;margin-top:14px;padding:13px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);font-family:"JetBrains Mono",monospace;font-size:16px;resize:vertical;
+}
+#input:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 0}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.stat b{display:block;font-size:24px;letter-spacing:-.02em}
+.stat small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)} h1{font-size:24px} #target{font-size:18px}}
+
+/* ---------- 4. LESSON + PROGRESS BITS ---------- */
+.lesson{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:13px 15px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;background:var(--bg);
+}
+.lesson small{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px}
+.lesson button{font:inherit;font-weight:600;font-size:13px;padding:7px 14px;border-radius:8px;
+  border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}
+.lesson button:hover{border-color:var(--accent);color:var(--accent)}
+.bar{height:9px;background:var(--bg);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar>i{display:block;height:100%;background:var(--accent);width:0}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+td{padding:9px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-weight:600;font-family:"JetBrains Mono",monospace}
+tr:last-child td{border-bottom:none}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">Type<span>Start</span></div>
+    <nav>
+      <button data-view="home" class="active">Home</button>
+      <button data-view="lessons">Lessons</button>
+      <button data-view="practice">Practice</button>
+      <button data-view="progress">Progress</button>
+    </nav>
+  </header>
+
+  <!-- ===== HOME ===== -->
+  <section id="home" class="card">
+    <h1>Learn Typing — From Zero to Fast 🚀</h1>
+    <p class="sub">Improve your speed and accuracy. Beginner • Free • Simple</p>
+    <div class="row">
+      <button class="btn" data-go="practice">Start practice</button>
+      <button class="btn ghost" data-go="lessons">Learn typing</button>
+    </div>
+  </section>
+
+  <!-- ===== LESSONS ===== -->
+  <section id="lessons" class="card hidden">
+    <h2>Beginner lessons</h2>
+    <p class="sub">Keep your fingers on <b>asdf</b> and <b>jkl;</b> — the home row. Don't look down.</p>
+    <div id="lessonList"></div>
+  </section>
+
+  <!-- ===== PRACTICE ===== -->
+  <section id="practice" class="card hidden">
+    <h2 id="practiceTitle">Typing practice</h2>
+    <p class="sub" id="practiceSub">Click the box and start typing. The timer starts on your first key.</p>
+
+    <div class="row" style="margin-bottom:14px">
+      <button class="btn ghost" data-secs="0">No timer</button>
+      <button class="btn ghost" data-secs="30">30 sec</button>
+      <button class="btn ghost" data-secs="60">60 sec</button>
+      <button class="btn ghost" data-secs="120">2 min</button>
+    </div>
+
+    <div id="target"></div>
+    <textarea id="input" rows="3" placeholder="Type here…" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+
+    <div class="stats">
+      <div class="stat"><b id="sWpm">0</b><small>WPM</small></div>
+      <div class="stat"><b id="sAcc">100%</b><small>Accuracy</small></div>
+      <div class="stat"><b id="sErr">0</b><small>Mistakes</small></div>
+      <div class="stat"><b id="sTime">0s</b><small>Time</small></div>
+    </div>
+
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="again">New text</button>
+      <button class="btn ghost" id="reset">Restart this one</button>
+    </div>
+  </section>
+
+  <!-- ===== PROGRESS ===== -->
+  <section id="progress" class="card hidden">
+    <h2>My progress</h2>
+    <p class="sub">Saved in this browser only.</p>
+    <table>
+      <tr><td>Best speed</td><td id="pBest">—</td></tr>
+      <tr><td>Average speed</td><td id="pAvg">—</td></tr>
+      <tr><td>Best accuracy</td><td id="pAcc">—</td></tr>
+      <tr><td>Tests completed</td><td id="pRuns">0</td></tr>
+      <tr><td>Practice days</td><td id="pDays">0</td></tr>
+    </table>
+    <div style="margin-top:16px">
+      <small style="color:var(--muted)">Progress towards 40 WPM</small>
+      <div class="bar"><i id="pBar"></i></div>
+    </div>
+    <div class="row" style="margin-top:18px"><button class="btn ghost" id="clear">Clear my progress</button></div>
+  </section>
+
+  <footer>Built with plain HTML, CSS and JavaScript — no frameworks.</footer>
+</div>
+
+<script>
+/* =========================================================
+   TypeStart — all the JavaScript lives here.
+   Read it top to bottom; every block has a comment.
+   ========================================================= */
+
+/* ---- The content ---- */
+const LESSONS = [
+  {name:"Level 1 — Home row keys", text:"asdf jkl; asdf jkl; fdsa ;lkj asdf jkl;"},
+  {name:"Level 2 — Mixing the home row", text:"as df jk l; sad lad fall ask flask sass"},
+  {name:"Level 3 — New letters g and h", text:"gh gh fgh hjk gas hall glad flash gash half"},
+  {name:"Level 4 — Short words", text:"dad sad ask fall flag half glass lad hall gash"},
+  {name:"Level 5 — Sentences", text:"A dad had a flag. A sad lad asks a lass. Half a glass."},
+  {name:"Level 6 — Capitals and punctuation", text:"The lad said, \"Ask Dad!\" She had half a glass; he had none."}
+];
+
+const SENTENCES = [
+  "The quick brown fox jumps over the lazy dog.",
+  "Practice a little every day and your fingers will learn the rest.",
+  "Typing well is about accuracy first and speed second.",
+  "A small step taken today is better than a big plan for tomorrow.",
+  "Keep your wrists relaxed and your eyes on the screen.",
+  "Programming is mostly reading, thinking, and only then typing.",
+  "The best way to learn something is to build something with it."
+];
+
+/* ---- Small helpers ---- */
+const $ = (id) => document.getElementById(id);
+const views = ["home","lessons","practice","progress"];
+
+function show(view){
+  views.forEach(v => $(v).classList.toggle("hidden", v !== view));
+  document.querySelectorAll("nav button").forEach(b =>
+    b.classList.toggle("active", b.dataset.view === view));
+  if (view === "progress") renderProgress();
+  if (view === "practice") $("input").focus();
+}
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.view));
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go));
+
+/* ---- State of the current test ---- */
+let target = "";        // the text you must type
+let startedAt = null;   // when the first key was pressed
+let limit = 0;          // seconds; 0 means no limit
+let tick = null;        // the repeating timer
+let finished = false;
+
+/* ---- Draw the target text as one <span> per character ---- */
+function paint(typed = ""){
+  const box = $("target");
+  box.innerHTML = "";
+  for (let i = 0; i < target.length; i++){
+    const s = document.createElement("span");
+    s.textContent = target[i];
+    if (i < typed.length) s.className = typed[i] === target[i] ? "ok" : "bad";
+    else if (i === typed.length) s.className = "cur";
+    box.appendChild(s);
+  }
+}
+
+/* ---- Load a new text and clear everything ---- */
+function load(text, title, sub){
+  target = text;
+  if (title) $("practiceTitle").textContent = title;
+  if (sub) $("practiceSub").textContent = sub;
+  reset();
+  show("practice");
+}
+
+function reset(){
+  clearInterval(tick);
+  startedAt = null; finished = false;
+  $("input").value = "";
+  $("input").disabled = false;
+  $("sWpm").textContent = "0";
+  $("sAcc").textContent = "100%";
+  $("sErr").textContent = "0";
+  $("sTime").textContent = limit ? limit + "s" : "0s";
+  paint("");
+  $("input").focus();
+}
+
+/* ---- The maths: WPM, accuracy, mistakes ---- */
+function measure(){
+  const typed = $("input").value;
+  let correct = 0, wrong = 0;
+  for (let i = 0; i < typed.length; i++){
+    if (typed[i] === target[i]) correct++; else wrong++;
+  }
+  const seconds = startedAt ? (Date.now() - startedAt) / 1000 : 0;
+  // One "word" is counted as 5 characters — the standard everyone uses.
+  const wpm = seconds > 0 ? Math.round((correct / 5) / (seconds / 60)) : 0;
+  const acc = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+  return {typed, correct, wrong, seconds, wpm, acc};
+}
+
+function refresh(){
+  const m = measure();
+  $("sWpm").textContent = m.wpm;
+  $("sAcc").textContent = m.acc + "%";
+  $("sErr").textContent = m.wrong;
+  $("sTime").textContent = limit
+    ? Math.max(0, Math.ceil(limit - m.seconds)) + "s"
+    : Math.floor(m.seconds) + "s";
+  return m;
+}
+
+/* ---- Every keystroke runs this ---- */
+$("input").addEventListener("input", () => {
+  if (finished) return;
+  if (!startedAt){                       // first key = start the clock
+    startedAt = Date.now();
+    tick = setInterval(() => {
+      const m = refresh();
+      if (limit && m.seconds >= limit) finish();
+    }, 100);
+  }
+  const m = refresh();
+  paint(m.typed);
+  if (!limit && m.typed.length >= target.length) finish();
+});
+
+function finish(){
+  if (finished) return;
+  finished = true;
+  clearInterval(tick);
+  const m = refresh();
+  $("input").disabled = true;
+  if (m.typed.length > 3) save(m.wpm, m.acc);
+  $("practiceSub").textContent =
+    `Done — ${m.wpm} WPM at ${m.acc}% accuracy, ${m.wrong} mistakes. Press "New text" to go again.`;
+}
+
+/* ---- Buttons ---- */
+$("reset").onclick = reset;
+$("again").onclick = () => {
+  const s = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
+  load(s, "Typing practice", "Click the box and start typing. The timer starts on your first key.");
+};
+document.querySelectorAll("[data-secs]").forEach(b => b.onclick = () => {
+  limit = Number(b.dataset.secs);
+  document.querySelectorAll("[data-secs]").forEach(x => x.classList.add("ghost"));
+  b.classList.remove("ghost");
+  reset();
+});
+
+/* ---- Lesson list ---- */
+LESSONS.forEach(l => {
+  const row = document.createElement("div");
+  row.className = "lesson";
+  const left = document.createElement("div");
+  left.innerHTML = `<div style="font-weight:600">${l.name}</div>`;
+  const code = document.createElement("small");
+  code.textContent = l.text.slice(0, 34) + (l.text.length > 34 ? "…" : "");
+  left.appendChild(code);
+  const btn = document.createElement("button");
+  btn.textContent = "Start";
+  btn.onclick = () => { limit = 0; load(l.text, l.name, "Type it exactly, slowly. Accuracy before speed."); };
+  row.append(left, btn);
+  $("lessonList").appendChild(row);
+});
+
+/* ---- Saving progress (localStorage = this browser's little notebook) ---- */
+const KEY = "typestart-progress";
+function read(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || {runs:[], days:[]}; }
+  catch(e){ return {runs:[], days:[]}; }
+}
+function save(wpm, acc){
+  try {
+    const d = read();
+    d.runs.push({wpm, acc});
+    if (d.runs.length > 200) d.runs = d.runs.slice(-200);
+    const today = new Date().toDateString();
+    if (!d.days.includes(today)) d.days.push(today);
+    localStorage.setItem(KEY, JSON.stringify(d));
+  } catch(e){ /* storage may be blocked — the app still works */ }
+}
+function renderProgress(){
+  const d = read();
+  const runs = d.runs || [];
+  if (!runs.length){ $("pBest").textContent = $("pAvg").textContent = $("pAcc").textContent = "—"; }
+  else {
+    const best = Math.max(...runs.map(r => r.wpm));
+    const avg = Math.round(runs.reduce((s,r) => s + r.wpm, 0) / runs.length);
+    $("pBest").textContent = best + " WPM";
+    $("pAvg").textContent = avg + " WPM";
+    $("pAcc").textContent = Math.max(...runs.map(r => r.acc)) + "%";
+    $("pBar").style.width = Math.min(100, Math.round(best / 40 * 100)) + "%";
+  }
+  $("pRuns").textContent = runs.length;
+  $("pDays").textContent = (d.days || []).length;
+}
+$("clear").onclick = () => {
+  try { localStorage.removeItem(KEY); } catch(e){}
+  renderProgress();
+};
+
+/* ---- Start the app ---- */
+target = SENTENCES[0];
+paint("");
+</script>
+</body>
+</html>
